@@ -150,17 +150,22 @@ Everything is in `aircontrol/config.py`. A few knobs you'll likely want to adjus
 python -m pytest tests/ -v
 # or, without pytest installed:
 python tests/test_gesture_logic.py
+python tests/test_hand_tracker_integration.py
 ```
 
-The test suite synthesizes MediaPipe-shaped hand landmarks for each canonical pose (open palm, fist, point, pinch, two-finger) and verifies:
-- finger-up detection
-- gesture classification
-- end-to-end state transitions (pause-on-fist, auto-pause-on-no-hand, master disable, emergency stop)
-- click debounce (a single sustained pinch fires exactly one click)
-- mouse coordinate mapping stays within screen bounds
-- the two-hand pinch screenshot flow enters `SCREENSHOT_SELECTING` and captures correctly
+There are two test files, covering different layers:
 
-No webcam or display is required to run these tests.
+- **`tests/test_gesture_logic.py`** synthesizes MediaPipe-shaped hand landmarks for each canonical pose (open palm, fist, point, pinch, two-finger) and verifies gesture logic entirely with hand-built data — it never touches MediaPipe itself:
+  - finger-up detection
+  - gesture classification
+  - end-to-end state transitions (pause-on-fist, auto-pause-on-no-hand, master disable, emergency stop)
+  - click debounce (a single sustained pinch fires exactly one click)
+  - mouse coordinate mapping stays within screen bounds
+  - the two-hand pinch screenshot flow enters `SCREENSHOT_SELECTING` and captures correctly
+
+- **`tests/test_hand_tracker_integration.py`** exercises the *real* `mediapipe.solutions.hands` pipeline through the actual `HandTracker` class — the layer the gesture-logic tests deliberately bypass. It feeds synthetic image arrays (no webcam/hand needed) straight into the real model and verifies the parsing code, output shapes/dtypes, `draw_hand()` against MediaPipe's real `HAND_CONNECTIONS`, and that a real (empty) `TrackingFrame` correctly drives `GestureController` to auto-pause.
+
+No webcam or display is required to run either test file.
 
 ---
 

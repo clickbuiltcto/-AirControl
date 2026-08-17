@@ -36,3 +36,12 @@ jobs:
           # importable by putting the repo root on the path directly,
           # same as running locally with PYTHONPATH="."
           PYTHONPATH: ${{ github.workspace }}
+
+      - name: Run MediaPipe integration tests
+        # Exercises the real mediapipe.solutions.hands pipeline (no
+        # webcam/hand needed - synthetic image arrays only), unlike the
+        # gesture logic tests above which use hand-built landmark objects
+        # and never touch mediapipe.Hands at all.
+        run: python tests/test_hand_tracker_integration.py
+        env:
+          PYTHONPATH: ${{ github.workspace }}
