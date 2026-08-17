@@ -1,0 +1,14 @@
+# AirControl V1 dependencies
+#
+# NOTE on mediapipe version: pinned to 0.10.14. Newer mediapipe releases
+# (0.10.18+) removed the legacy `mp.solutions.hands` API in favor of the
+# Tasks API, which requires downloading a separate .task model file at
+# runtime. 0.10.14 ships its hand-tracking model inside the pip wheel, so
+# AirControl works fully offline after `pip install` — no extra downloads,
+# no extra config. If you intentionally want to upgrade mediapipe, see the
+# "Upgrading MediaPipe" section in README.md first.
+opencv-python>=4.9,<5
+mediapipe==0.10.14
+numpy>=1.26,<2.3
+pyautogui>=0.9.54,<1
+pynput>=1.7,<2
