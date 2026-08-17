@@ -1,0 +1,38 @@
+name: Tests
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  test:
+    # AirControl is a Windows-targeted app (built-in webcam via DirectShow,
+    # pyautogui driving the real OS cursor). pyautogui also requires a
+    # display to even import on Linux, which a headless runner doesn't
+    # have, so we run on windows-latest to match the real deployment target
+    # and avoid needing a virtual display.
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run camera-free gesture logic tests
+        run: python tests/test_gesture_logic.py
+        env:
+          # tests/ has no __init__.py, so make the aircontrol package
+          # importable by putting the repo root on the path directly,
+          # same as running locally with PYTHONPATH="."
+          PYTHONPATH: ${{ github.workspace }}
