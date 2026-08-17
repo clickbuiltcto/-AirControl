@@ -7,7 +7,20 @@
 # AirControl works fully offline after `pip install` — no extra downloads,
 # no extra config. If you intentionally want to upgrade mediapipe, see the
 # "Upgrading MediaPipe" section in README.md first.
-opencv-python>=4.9,<5
+#
+# NOTE on the cv2 package: do NOT add `opencv-python` here. `mediapipe`
+# already pulls in `opencv-contrib-python` as a transitive dependency, and
+# both packages install into the same top-level `cv2` directory — whichever
+# one pip installs last silently overwrites the other's files. Declaring
+# our own `opencv-python` alongside mediapipe's `opencv-contrib-python`
+# doesn't give two working installs, it gives one broken/undefined one,
+# and any version pin on our `opencv-python` line is not actually enforced
+# (this bit us: `opencv-python<5` was declared, but `opencv-contrib-python`
+# 5.x still ended up owning `cv2` after a plain `pip install -r
+# requirements.txt`). AirControl doesn't use any contrib-only modules, so
+# we pin the package that actually wins instead of fighting mediapipe for
+# the namespace.
+opencv-contrib-python>=4.9,<5
 mediapipe==0.10.14
 numpy>=1.26,<2.3
 pyautogui>=0.9.54,<1
