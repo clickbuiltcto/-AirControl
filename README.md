@@ -198,4 +198,4 @@ If you want to move to a newer MediaPipe version that uses the Tasks API (`HandL
 
 ## License
 
-Internal project foundation — add your preferred license here before distribution.
+MIT — see [LICENSE](LICENSE).
