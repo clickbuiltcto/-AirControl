@@ -148,6 +148,10 @@ def _run_action(action: str) -> None:
             pyautogui.hotkey(*action.split("+"))
         else:
             pyautogui.press(action)
+        # Hotkeys/keypresses go to whichever window currently has keyboard
+        # focus (not wherever the mouse cursor is) - if that's the
+        # AirControl window itself, this fires but has no visible effect.
+        log.info(f"Navigation action '{action}' sent to the focused window.")
     except Exception as exc:  # pragma: no cover - depends on display env
         log.error(f"Failed to execute navigation action '{action}': {exc}")
 

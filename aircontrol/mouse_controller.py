@@ -169,8 +169,12 @@ class MouseController:
     def click(self) -> None:
         if not self.enabled:
             return
-        pyautogui.click(_pause=False)
-        log.info("Left click")
+        try:
+            pos = pyautogui.position()
+            pyautogui.click(_pause=False)
+            log.info(f"Left click at {tuple(pos)}")
+        except Exception as exc:  # pragma: no cover - depends on display env
+            log.error(f"Failed to execute click: {exc}")
 
     # ------------------------------------------------------------------ #
     # Scroll
@@ -186,7 +190,11 @@ class MouseController:
             return
         amount = int(delta * self.config.scroll_sensitivity * 10)
         if amount != 0:
-            pyautogui.scroll(amount, _pause=False)
+            try:
+                pyautogui.scroll(amount, _pause=False)
+                log.info(f"Scroll {amount:+d} at {tuple(pyautogui.position())}")
+            except Exception as exc:  # pragma: no cover - depends on display env
+                log.error(f"Failed to execute scroll: {exc}")
         self._scroll_ref_y = norm_y
 
     def end_scroll(self) -> None:
